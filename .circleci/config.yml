@@ -7,6 +7,10 @@ defaults1: &defaults1
   docker:
       - image: amazon/aws-cli
 
+default2: &default2
+  docker:
+      - image: python:3.7-alpine3.11
+
 commands:
   destroy-environment:
     description: Destroy back-end and front-end cloudformation stacks given a workflow ID.
@@ -170,24 +174,25 @@ jobs:
       #     workflow_id: ${CIRCLE_WORKFLOW_ID}
       # Here's where you will add some code to rollback on failure      
 
-#   configure-infrastructure:
-#     docker:
-#       # Docker image here that supports Ansible
-#     steps:
-#       # Checkout code from git
-#       # Add ssh keys with fingerprint
-#       # attach workspace
-#       - run:
-#           name: Install dependencies
-#           command: |
-#             # Your code here
-#             exit 1
-#       - run:
-#           name: Configure server
-#           command: |
-#             # Your code here
-#             exit 1
-#       # Here's where you will add some code to rollback on failure      
+  configure-infrastructure:
+    <<: *defaults2
+    steps:
+      - checkout
+      - add_ssh_keys:
+          fingerprints: ["30:d9:8d:26:89:be:04:0c:72:b0:b4:fe:1c:64:8a:40"]
+      - attach_workspace:
+          at: ~/project
+      - run:
+          name: Install dependencies
+          command: |
+            apk add --update ansible
+            apk add openssh-client
+      - run:
+          name: Configure server
+          command: |
+            cd .circleci/ansible
+            ansible-playbook -i inventory.txt  configure-server.yml
+      # Here's where you will add some code to rollback on failure      
 
 #   run-migrations:
 #     docker:
