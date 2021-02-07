@@ -1,4 +1,7 @@
 version: 2.1
+defaults: &defaults
+  docker:
+      - image: circleci/node:13.8.0
 
 commands:
   destroy-environment:
@@ -34,8 +37,7 @@ commands:
             
 jobs:
   build-frontend:
-    docker:
-      - image: circleci/node:13.8.0
+    <<: *defaults
     steps:
       - checkout
       - restore_cache:
@@ -51,8 +53,7 @@ jobs:
           key: frontend-build
 
   build-backend:
-    docker:
-      - image: circleci/node:13.8.0
+    <<: *defaults
     steps:
       - checkout
       - restore_cache:
@@ -68,8 +69,7 @@ jobs:
           key: backend-build
 
   test-frontend:
-    docker:
-      - image: circleci/node:13.8.0
+    <<: *defaults
     steps:
       - checkout
       - restore_cache:
@@ -82,8 +82,7 @@ jobs:
             npm run test   
                 
   test-backend:
-    docker:
-      - image: circleci/node:13.8.0
+    <<: *defaults
     steps:
       - checkout
       - restore_cache:
@@ -95,21 +94,29 @@ jobs:
             npm install jest
             npm run test
             
-#   scan-frontend:
-#     docker:
-#       # Docker image here
-#     steps:
-#       # Checkout code from git
-#       # Restore from cache
-#       # Your job code here
+  scan-frontend:
+    <<: *defaults
+    steps:
+      - checkout
+      - restore_cache:
+          keys: [build-frontend]
+      - run:
+          name: Scanning vulnerabilities audit for frontend
+          command: |
+            cd frontend
+            npm audit --audit-level=critical
 
-#   scan-backend:
-#     docker:
-#       # Docker image here
-#     steps:
-#       # Checkout code from git
-#       # Restore from cache
-#       # Your job code here
+  scan-backend:
+    <<: *defaults
+    steps:
+      - checkout
+      - restore_cache:
+          keys: [build-backend]
+      - run:
+          name: Scanning vulnerabilities audit for backend
+          command: |
+            cd backend
+            npm audit --audit-level=critical
 
 #   deploy-infrastructure:
 #     docker:
