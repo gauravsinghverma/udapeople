@@ -287,11 +287,14 @@ jobs:
             apk add --update tar gzip ansible nodejs npm curl
             apk add --no-cache openssh-client
             apk add --no-cache --upgrade bash
+            pip install awscli
       - run:
           name: Deploy backend
           no_output_timeout: 30m
           command: |
-            echo ENVIROMENT=development > "backend/.env"
+            cat inventory.txt
+            cp inventory.txt .circleci/ansible
+            echo ENVIROMENT=production >> "backend/.env"
             echo TYPEORM_CONNECTION=postgres >> "backend/.env"
             echo TYPEORM_MIGRATIONS_DIR=./src/migrations >> "backend/.env"
             echo TYPEORM_ENTITIES=./src/modules/domain/**/*.entity.ts >> "backend/.env"
@@ -301,9 +304,9 @@ jobs:
             echo TYPEORM_USERNAME=$TYPEORM_USERNAME >> "backend/.env"
             echo TYPEORM_PASSWORD=$TYPEORM_PASSWORD >> "backend/.env"
             echo TYPEORM_DATABASE=$TYPEORM_DATABASE >> "backend/.env"
-            tar -C backend -czvf artifact.tar.gz .
-            cd .circleci/ansible/
-            ansible-playbook -i .circleci/ansible/inventory.txt deploy-backend.yml
+            cd .circleci/ansible
+            export ANSIBLE_HOST_KEY_CHECKING=False
+            ansible-playbook -i inventory.txt deploy-backend.yml -vv
       # Here's where you will add some code to rollback on failure  
 
   smoke-test:
