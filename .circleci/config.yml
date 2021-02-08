@@ -301,7 +301,7 @@ jobs:
 
   smoke-test:
     docker:
-      <<: *defaults
+    <<: *defaults
     steps:
       - checkout
       - restore_cache:
