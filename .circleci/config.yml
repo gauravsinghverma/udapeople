@@ -292,8 +292,6 @@ jobs:
           name: Deploy backend
           no_output_timeout: 30m
           command: |
-            cat inventory.txt
-            cp inventory.txt .circleci/ansible
             echo ENVIROMENT=production >> "backend/.env"
             echo TYPEORM_CONNECTION=postgres >> "backend/.env"
             echo TYPEORM_MIGRATIONS_DIR=./src/migrations >> "backend/.env"
