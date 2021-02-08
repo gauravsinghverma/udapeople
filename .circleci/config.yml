@@ -284,33 +284,23 @@ jobs:
           name: Install dependencies
           command: |
             apk add --update ansible tar gzip nodejs npm curl
+            apk -Uuv add groff less python py-pip
             pip install awscli
       - run:
           name: Deploy backend
           command: |
-            export NODE_ENV=Production
-            export ENVIRONMENT=Production
-            export VERSION=1
-            export TYPEORM_CONNECTION=postgres
-            export TYPEORM_MIGRATIONS_DIR=./src/migrations
-            export TYPEORM_ENTITIES=./src/modules/domain/**/*.entity.ts
-            export TYPEORM_MIGRATIONS=./src/migrations/*.ts
-            # Use these values for the local PG database from the Docker Compose file
-            export TYPEORM_HOST=udapeople-prod.csghw51ceft2.us-west-2.rds.amazonaws.com
-            export TYPEORM_PORT=5432
-            export TYPEORM_USERNAME=postgres
-            export TYPEORM_PASSWORD=udapeople123
-            export TYPEORM_DATABASE=postgres
             cd backend
             npm install
             npm run build
-            cp package* ./dist
-            cd dist
-            tar -czvf ../backendArtifacts.tar.gz ./*
-            cd ~/project/.circleci/ansible
-            ansible-playbook -i \
-              ~/project/.circleci/ansible/inventory.txt \
-              ~/project/.circleci/ansible/deploy-backend.yml
+            
+            cp -r node_modules dist/
+            tar -czvf backend_artifact.tar.gz dist
+            
+            cd ..
+            mkdir -p /.circleci/ansible/roles/deploy/files
+            mv backend/backend_artifact.tar.gz .circleci/ansible/roles/deploy/files
+            cd .circleci/ansible/roles/deploy/files
+            ansible-playbook -i ~/project/.circleci/ansible/inventory.txt ~/project/.circleci/ansible/deploy-backend.yml -vvv
       # Here's where you will add some code to rollback on failure  
 
   smoke-test:
