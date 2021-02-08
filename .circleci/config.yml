@@ -223,6 +223,7 @@ jobs:
             export TYPEORM_USERNAME=postgres
             export TYPEORM_PASSWORD=udapeople123
             export TYPEORM_DATABASE=postgres
+            
             npm run migrations > output.txt
             cat output.txt
       - run:
