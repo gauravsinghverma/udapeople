@@ -243,7 +243,7 @@ jobs:
   deploy-frontend:
     <<: *defaults1
     steps:
-      -checkout
+      - checkout
       - run:
           name: Install dependencies
           command: |
@@ -365,8 +365,8 @@ workflows:
       # #    requires: [build-backend]  
       #- run-migrations:
           #requires: [configure-infrastructure]
-       - deploy-frontend:
-            requires: [build-backend]  
+      - deploy-frontend:
+          requires: [build-backend]  
 #           requires: [run-migrations]
 #       - deploy-backend:
 #           requires: [run-migrations]
