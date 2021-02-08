@@ -199,7 +199,7 @@ jobs:
     steps:
       - checkout
       - restore_cache:
-          keys: [build-backend]
+          keys: [backend-build]
       - run:
           name: Install dependencies
           command: |
@@ -210,6 +210,8 @@ jobs:
           name: Run migrations
           command: |
             cd backend
+            cd node_modules
+            ls -lrt
             npm run migrations > output.txt
             cat output.txt
       - run:
