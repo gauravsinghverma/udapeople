@@ -279,22 +279,31 @@ jobs:
       - add_ssh_keys:
           fingerprints: ["30:d9:8d:26:89:be:04:0c:72:b0:b4:fe:1c:64:8a:40"]
       - attach_workspace:
-          at: ~/
+          at: .circleci/ansible/
       - run:
           name: Install dependencies
           command: |
-            apk add --no-cache tar gzip
             apk add --update ansible
-            apk add --update curl
-            apk add --update jq
+            apk add --update tar gzip ansible nodejs npm curl
+            apk add --no-cache openssh-client
+            apk add --no-cache --upgrade bash
       - run:
           name: Deploy backend
           no_output_timeout: 30m
           command: |
-            cd ~/project/backend/
-            tar -cvzf node_modules.tar.gz ./node_modules
-            cd ~/project/.circleci/ansible/
-            ansible-playbook -i inventory.txt deploy-backend.yml
+            echo ENVIROMENT=development > "backend/.env"
+            echo TYPEORM_CONNECTION=postgres >> "backend/.env"
+            echo TYPEORM_MIGRATIONS_DIR=./src/migrations >> "backend/.env"
+            echo TYPEORM_ENTITIES=./src/modules/domain/**/*.entity.ts >> "backend/.env"
+            echo TYPEORM_MIGRATIONS=./src/migrations/*.ts >> "backend/.env"
+            echo TYPEORM_HOST=$TYPEORM_HOST >> "backend/.env"
+            echo TYPEORM_PORT=$TYPEORM_PORT >> "backend/.env"
+            echo TYPEORM_USERNAME=$TYPEORM_USERNAME >> "backend/.env"
+            echo TYPEORM_PASSWORD=$TYPEORM_PASSWORD >> "backend/.env"
+            echo TYPEORM_DATABASE=$TYPEORM_DATABASE >> "backend/.env"
+            tar -C backend -czvf artifact.tar.gz .
+            cd .circleci/ansible/
+            ansible-playbook -i .circleci/ansible/inventory.txt deploy-backend.yml
       # Here's where you will add some code to rollback on failure  
 
   smoke-test:
