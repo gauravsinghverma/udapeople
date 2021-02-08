@@ -259,10 +259,16 @@ jobs:
               --output text)
             export API_URL="http://${BACKEND_IP}:3030"
             echo "${API_URL}"
-      # - run:
-      #     name: Deploy frontend objects
-      #     command: |
-      #       # your code here
+            echo "API_URL=${API_URL}" >> ~/project/frontend/.env
+            echo "NODE_ENV=production" >> ~/project/frontend/.env
+            echo "ENVIRONMENT=production" >> ~/project/frontend/.env
+      - run:
+          name: Deploy frontend objects
+          command: |
+            cd ~/project/frontend
+            npm install
+            npm run build
+            aws s3 sync dist s3://udapeople-${CIRCLE_WORKFLOW_ID}
       # Here's where you will add some code to rollback on failure      
                     
 #   deploy-backend:
@@ -353,21 +359,20 @@ workflows:
       #     requires: [build-backend]
       # - scan-frontend:
       #     requires: [build-frontend]
-      # - deploy-infrastructure:
-      #     requires: [build-frontend, build-backend]
-      #     # requires: [test-frontend, test-backend, scan-frontend, scan-backend]
-      #     filters:
-      #       branches:
-      #         only: [master]
-      # - configure-infrastructure:
-      #     requires: [deploy-infrastructure]
+      - deploy-infrastructure:
+          requires: [build-frontend, build-backend]
+          # requires: [test-frontend, test-backend, scan-frontend, scan-backend]
+          filters:
+            branches:
+              only: [master]
+      - configure-infrastructure:
+          requires: [deploy-infrastructure]
       # #- run-migrations:
       # #    requires: [build-backend]  
-      #- run-migrations:
-          #requires: [configure-infrastructure]
+      - run-migrations:
+          requires: [configure-infrastructure]
       - deploy-frontend:
-          requires: [build-backend]  
-#           requires: [run-migrations]
+          requires: [run-migrations]
 #       - deploy-backend:
 #           requires: [run-migrations]
 #       - smoke-test:
