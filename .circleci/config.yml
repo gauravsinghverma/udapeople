@@ -83,7 +83,7 @@ jobs:
     steps:
       - checkout
       - restore_cache:
-          keys: [build-frontend]
+          keys: [frontend-build]
       - run:
           name: Front-end test cases
           command: |
@@ -96,7 +96,7 @@ jobs:
     steps:
       - checkout
       - restore_cache:
-          keys: [build-backend]
+          keys: [backend-build]
       - run:
           name: Back-end test cases
           command: |
@@ -109,7 +109,7 @@ jobs:
     steps:
       - checkout
       - restore_cache:
-          keys: [build-frontend]
+          keys: [frontend-build]
       - run:
           name: Scanning vulnerabilities audit for frontend
           command: |
@@ -121,7 +121,7 @@ jobs:
     steps:
       - checkout
       - restore_cache:
-          keys: [build-backend]
+          keys: [backend-build]
       - run:
           name: Scanning vulnerabilities audit for backend
           command: |
@@ -162,6 +162,7 @@ jobs:
       - run:
           name: Add back-end ip to ansible inventory
           command: |
+            #here
             aws ec2 describe-instances \
                 --query 'Reservations[*].Instances[*].PublicIpAddress' \
                 --filters "Name=tag:Name,Values=backend-$CIRCLE_WORKFLOW_ID" \
@@ -239,26 +240,30 @@ jobs:
             fi
      # Here's where you will add some code to rollback on failure      
 
-#   deploy-frontend:
-#     docker:
-#       # Docker image here that supports AWS CLI
-#     steps:
-#       # Checkout code from git
-#       - run:
-#           name: Install dependencies
-#           command: |
-#             # your code here
-#       - run:
-#           name: Get backend url
-#           command: |
-#             # your code here
-#             export API_URL="http://${BACKEND_IP}:3030"
-#             echo "${API_URL}"
-#       - run:
-#           name: Deploy frontend objects
-#           command: |
-#             # your code here
-#       # Here's where you will add some code to rollback on failure      
+  deploy-frontend:
+    <<: *defaults1
+    steps:
+      -checkout
+      - run:
+          name: Install dependencies
+          command: |
+            yum install -y tar gzip
+            curl -sL https://rpm.nodesource.com/setup_13.x | bash -
+            yum install -y nodejs
+      - run:
+          name: Get backend url
+          command: |
+            export BACKEND_IP=$(aws ec2 describe-instances \
+              --filters "Name=tag:Name,Values=backend-${CIRCLE_WORKFLOW_ID}" \
+              --query 'Reservations[*].Instances[*].PublicIpAddress' \
+              --output text)
+            export API_URL="http://${BACKEND_IP}:3030"
+            echo "${API_URL}"
+      # - run:
+      #     name: Deploy frontend objects
+      #     command: |
+      #       # your code here
+      # Here's where you will add some code to rollback on failure      
                     
 #   deploy-backend:
 #     docker:
@@ -356,11 +361,12 @@ workflows:
       #         only: [master]
       # - configure-infrastructure:
       #     requires: [deploy-infrastructure]
-      - run-migrations:
-          requires: [build-backend]  
+      # #- run-migrations:
+      # #    requires: [build-backend]  
       #- run-migrations:
           #requires: [configure-infrastructure]
-#       - deploy-frontend:
+       - deploy-frontend:
+            requires: [build-backend]  
 #           requires: [run-migrations]
 #       - deploy-backend:
 #           requires: [run-migrations]
