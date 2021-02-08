@@ -196,6 +196,8 @@ jobs:
 
   run-migrations:
     <<: *defaults
+    environment:
+      migration_status: 0
     steps:
       - checkout
       - restore_cache:
