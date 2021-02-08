@@ -211,6 +211,8 @@ jobs:
           name: Run migrations
           command: |
             cd backend
+            npm i
+            npm install typescript -g
             npm run migrations > output.log
             migration_status=`grep -c "has been executed successfully"  output.log`
             cat output.log
