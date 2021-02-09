@@ -302,8 +302,12 @@ jobs:
             echo TYPEORM_USERNAME=$TYPEORM_USERNAME >> "backend/.env"
             echo TYPEORM_PASSWORD=$TYPEORM_PASSWORD >> "backend/.env"
             echo TYPEORM_DATABASE=$TYPEORM_DATABASE >> "backend/.env"
-            tar -C backend -czvf artifact.tar.gz .
-            ls -la
+            cd backend
+            npm i
+            npm run build
+            cp package* ./dist
+            cd dist
+            tar -czvf ../app.tar.gz ./*
             cd .circleci/ansible
             export ANSIBLE_HOST_KEY_CHECKING=False
             aws ec2 describe-instances \
