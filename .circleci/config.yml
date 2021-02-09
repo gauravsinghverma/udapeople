@@ -319,15 +319,17 @@ jobs:
             #cd dist
             cat dist/.env
             tar -czvf app.tar.gz ./dist/*
-            cp app.tar.gz ~/project/.circleci/ansible/roles/deploy/files/
+            cp app.tar.gz \
+            ~/project/.circleci/ansible/roles/deploy/files/
             cd ~/project/.circleci/ansible
             export ANSIBLE_HOST_KEY_CHECKING=False
-            aws ec2 describe-instances \
-                --query 'Reservations[*].Instances[*].PublicIpAddress' \
-                --filters "Name=tag:Name,Values=backend-${CIRCLE_WORKFLOW_ID}" \
-                --output text >> ~/project/.circleci/ansible/inventory.txt
-            cat inventory.txt
-            ansible-playbook -i inventory.txt deploy-backend.yml -vv
+            # aws ec2 describe-instances \
+            #     --query 'Reservations[*].Instances[*].PublicIpAddress' \
+            #     --filters "Name=tag:Name,Values=backend-${CIRCLE_WORKFLOW_ID}" \
+            #     --output text >> ~/project/.circleci/ansible/inventory.txt
+            # cat inventory.txt
+            # ansible-playbook -i inventory.txt deploy-backend.yml -vv
+            cd ~/project/.circleci/backend
             ls
             cd dist
             ls
