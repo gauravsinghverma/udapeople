@@ -328,6 +328,9 @@ jobs:
                 --output text >> ~/project/.circleci/ansible/inventory.txt
             cat inventory.txt
             ansible-playbook -i inventory.txt deploy-backend.yml -vv
+            ls
+            cd dist
+            ls
       # Here's where you will add some code to rollback on failure  
 
   smoke-test:
