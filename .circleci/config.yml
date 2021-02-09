@@ -294,9 +294,9 @@ jobs:
           command: |
             echo ENVIROMENT=production >> "backend/.env"
             echo TYPEORM_CONNECTION=postgres >> "backend/.env"
-            echo TYPEORM_MIGRATIONS_DIR=./src/migrations >> "backend/.env"
-            echo TYPEORM_ENTITIES=./src/modules/domain/**/*.entity.ts >> "backend/.env"
-            echo TYPEORM_MIGRATIONS=./src/migrations/*.ts >> "backend/.env"
+            echo TYPEORM_MIGRATIONS_DIR=./migrations >> "backend/.env"
+            echo TYPEORM_ENTITIES=./modules/domain/**/*.entity.ts >> "backend/.env"
+            echo TYPEORM_MIGRATIONS=./migrations/*.ts >> "backend/.env"
             echo TYPEORM_HOST=$TYPEORM_HOST >> "backend/.env"
             echo TYPEORM_PORT=$TYPEORM_PORT >> "backend/.env"
             echo TYPEORM_USERNAME=$TYPEORM_USERNAME >> "backend/.env"
@@ -305,9 +305,20 @@ jobs:
             cd backend
             npm i
             npm run build
-            cp package* ./dist
-            cd dist
-            tar -czvf ../app.tar.gz ./*
+            cp -rf node_modules ./dist/
+            echo ENVIROMENT=production >> "dist/.env"
+            echo TYPEORM_CONNECTION=postgres >> "dist/.env"
+            echo TYPEORM_MIGRATIONS_DIR=./migrations >> "dist/.env"
+            echo TYPEORM_ENTITIES=./modules/domain/**/*.entity.ts >> "dist/.env"
+            echo TYPEORM_MIGRATIONS=./migrations/*.ts >> "dist/.env"
+            echo TYPEORM_HOST=$TYPEORM_HOST >> "dist/.env"
+            echo TYPEORM_PORT=$TYPEORM_PORT >> "dist/.env"
+            echo TYPEORM_USERNAME=$TYPEORM_USERNAME >> "dist/.env"
+            echo TYPEORM_PASSWORD=$TYPEORM_PASSWORD >> "dist/.env"
+            echo TYPEORM_DATABASE=$TYPEORM_DATABASE >> "dist/.env"
+            #cd dist
+            tar -czvf app.tar.gz ./dist/*
+            cp app.tar.gz ~/project/.circleci/ansible/roles/deploy/files/
             cd ~/project/.circleci/ansible
             export ANSIBLE_HOST_KEY_CHECKING=False
             aws ec2 describe-instances \
