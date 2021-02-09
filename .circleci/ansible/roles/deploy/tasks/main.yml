@@ -31,8 +31,8 @@
     rm app.tar.gz
 
 - name: "running backend app"
-  become_user: ubuntu
+  become: true
   shell: |
     cd /home/ubuntu/dist
-    #npm i    
-    pm2 start main.js --update-env
+    pm2 start main.js
+    pm2 ls
