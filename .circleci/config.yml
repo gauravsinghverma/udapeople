@@ -308,7 +308,7 @@ jobs:
             cp package* ./dist
             cd dist
             tar -czvf ../app.tar.gz ./*
-            cd .circleci/ansible
+            cd ~/project/.circleci/ansible
             export ANSIBLE_HOST_KEY_CHECKING=False
             aws ec2 describe-instances \
                 --query 'Reservations[*].Instances[*].PublicIpAddress' \
