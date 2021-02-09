@@ -18,8 +18,8 @@
     state: present
 
 - name: "deploy backend app to new location"
-  become_user: ubuntu
-  unarchive:
+  become: true
+  copy:
     src: app.tar.gz
     dest: /home/ubuntu/
     
