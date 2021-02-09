@@ -304,6 +304,10 @@ jobs:
             echo TYPEORM_DATABASE=$TYPEORM_DATABASE >> "backend/.env"
             cd .circleci/ansible
             export ANSIBLE_HOST_KEY_CHECKING=False
+            aws ec2 describe-instances \
+                --query 'Reservations[*].Instances[*].PublicIpAddress' \
+                --filters "Name=tag:Name,Values=backend-$CIRCLE_WORKFLOW_ID" \
+                --output text >> ~/project/.circleci/ansible/inventory.txt
             cat inventory.txt
             ansible-playbook -i inventory.txt deploy-backend.yml -vv
       # Here's where you will add some code to rollback on failure  
