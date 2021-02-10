@@ -376,14 +376,11 @@ jobs:
           name: Frontend smoke test.
           command: |
             URL="http://udapeople-${CIRCLE_WORKFLOW_ID}.s3.website.us-west-2.amazonaws.com"
-            echo ${URL}
-            echo curl -s ${URL}
-            echo curl -s ${URL} | grep "Welcome"
             if curl -s ${URL} | grep "Welcome"
             then
-              return 1
-            else
               return 0
+            else
+              return 1
             fi
       - destroy-environment:
           workflow_id: ${CIRCLE_WORKFLOW_ID}
@@ -394,10 +391,10 @@ jobs:
     <<: *defaults1
     steps:
       - checkout
-      # - run:
-      #     name: Install dependencies
-      #     command: |
-      #       sudo apt-get -qq install awscli
+      - run:
+          name: Install dependencies
+          command: |
+            yum install awscli
       - run:
           name: Update cloudfront distribution
           command: |
@@ -406,7 +403,6 @@ jobs:
               --stack-name udapeople-cloudfront \
               --parameter-overrides WorkflowID="${CIRCLE_WORKFLOW_ID}" \
               --tags project=udapeople-cloudfront
-
       - destroy-environment:
           workflow_id: ${CIRCLE_WORKFLOW_ID}
       - revert-migrations:
