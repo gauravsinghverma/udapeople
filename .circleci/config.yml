@@ -415,7 +415,7 @@ jobs:
     steps:
       - checkout
       - run:
-          name: Get old stack workflow id and delete old infra
+          name: Get old stack workflow id and delete old infrastructure
           command: |
             export OldWorkflowID=$(aws cloudformation \
               list-exports --query 'Exports[?Name==`WorkflowID`].Value' \
