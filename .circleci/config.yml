@@ -377,6 +377,9 @@ jobs:
           name: Frontend smoke test.
           command: |
             URL="http://udapeople-${CIRCLE_WORKFLOW_ID}.s3.website.us-west-2.amazonaws.com"
+            echo ${URL}
+            curl -s ${URL}
+            echo curl -s ${URL} | grep "Welcome"
             if curl -s ${URL} | grep "Welcome"
             then
               exit 1
@@ -392,10 +395,10 @@ jobs:
     <<: *defaults1
     steps:
       - checkout
-      - run:
-          name: Install dependencies
-          command: |
-            sudo apt-get -qq install awscli
+      # - run:
+      #     name: Install dependencies
+      #     command: |
+      #       sudo apt-get -qq install awscli
       - run:
           name: Update cloudfront distribution
           command: |
