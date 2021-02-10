@@ -37,7 +37,7 @@ commands:
     steps:
       - run:
           name: Revert migrations
-          # Add when this will run
+          when: on_fail
           command: |
             SUCCESS=$(curl -H "token: 3bb2c12f-a15f-428a-af02-a801c348dff9" --request GET https://api.memstash.io/values/migration_<< parameters.workflow_id >>)
             #SUCCESS = 1
@@ -178,8 +178,8 @@ jobs:
             - project/.circleci/ansible/inventory.txt
       - destroy-environment:
           workflow_id: ${CIRCLE_WORKFLOW_ID}
-      - revert-migrations:
-          workflow_id: ${CIRCLE_WORKFLOW_ID}
+      # - revert-migrations:
+      #     workflow_id: ${CIRCLE_WORKFLOW_ID}
       #Here's where you will add some code to rollback on failure      
 
   configure-infrastructure:
@@ -202,8 +202,8 @@ jobs:
             ansible-playbook -i inventory.txt  configure-server.yml
       - destroy-environment:
           workflow_id: ${CIRCLE_WORKFLOW_ID}
-      - revert-migrations:
-          workflow_id: ${CIRCLE_WORKFLOW_ID}
+      # - revert-migrations:
+      #     workflow_id: ${CIRCLE_WORKFLOW_ID}
 
 
   run-migrations:
