@@ -353,7 +353,7 @@ jobs:
           workflow_id: ${CIRCLE_WORKFLOW_ID}
 
   smoke-test:
-    <<: *defaults
+    <<: *defaults2
     steps:
       - checkout
       - restore_cache:
@@ -361,9 +361,8 @@ jobs:
       - run:
           name: Install dependencies
           command: |
-            sudo apt-get update
-            sudo apt-get install awscli
-            sudo apt install curl
+            apk add --update curl nodejs npm
+            pip install awscli
       - run:
           name: Get Backend URL and performe smoke test.
           command: |
@@ -382,9 +381,9 @@ jobs:
             echo curl -s ${URL} | grep "Welcome"
             if curl -s ${URL} | grep "Welcome"
             then
-              exit 1
+              return 1
             else
-              exit 0
+              return 0
             fi
       - destroy-environment:
           workflow_id: ${CIRCLE_WORKFLOW_ID}
