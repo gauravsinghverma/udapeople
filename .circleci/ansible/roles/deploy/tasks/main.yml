@@ -36,5 +36,3 @@
   shell: |
     cd /home/ubuntu/dist
     pm2 start main.js
-    
-    
