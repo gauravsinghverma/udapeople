@@ -2,13 +2,13 @@
 https://github.com/gauravsinghverma/udapeople/tree/master
 
 [URL02]
-http://udapeople-afb57a95-1035-42b9-b354-adc034a20923.s3-website-us-west-2.amazonaws.com/#/employees
+http://udapeople-2f8aef80-690b-416b-a9d7-7f1faba3d292.s3-website-us-west-2.amazonaws.com/#/employees
 
 [URL03]
-http://d3lumvkh20rhq7.cloudfront.net
+http://d30e6gwcr728vf.cloudfront.net
 
 [URL04]
-http://ec2-54-213-75-38.us-west-2.compute.amazonaws.com:3030/api/status
+http://ec2-52-13-18-221.us-west-2.compute.amazonaws.com:3030/api/status
 
 [URL05]
 http://ec2-54-70-202-234.us-west-2.compute.amazonaws.com:9090/
