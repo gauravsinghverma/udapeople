@@ -117,7 +117,8 @@ jobs:
           name: Scanning vulnerabilities audit for frontend
           command: |
             cd frontend
-            npm audit fix --audit-level=critical --force
+            #npm audit fix --audit-level=critical --force
+            npm audit --audit-level=critical
 
   scan-backend:
     <<: *defaults
